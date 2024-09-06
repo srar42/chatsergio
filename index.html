@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ChatWave - Tu Chat Privado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div id="authContainer">
+            <h1>ChatWave</h1>
+            <input type="text" id="usernameInput" placeholder="Nombre de usuario">
+            <input type="email" id="emailInput" placeholder="Email">
+            <input type="password" id="passwordInput" placeholder="Contraseña">
+            <button onclick="signIn()">Iniciar sesión</button>
+            <button onclick="signUp()">Registrarse</button>
+        </div>
+        <div id="mainContainer" style="display:none;">
+            <div id="chatListContainer">
+                <div id="chatListHeader">
+                    <h2>Chats</h2>
+                    <button id="editProfileBtn" onclick="showProfileEditor()" aria-label="Editar Perfil">
+                        <i class="fas fa-user-edit"></i>
+                    </button>
+                </div>
+                <div id="chatList">
+                    <!-- Chats se añadirán aquí dinámicamente -->
+                </div>
+            </div>
+            <div id="activeChatContainer">
+                <div id="chatHeader">
+                    <button id="backToChatList" onclick="showChatList()" aria-label="Volver a la lista de chats">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2>Selecciona un chat</h2>
+                </div>
+                <div id="messages"></div>
+                <div class="input-group">
+                    <input type="text" id="messageInput" placeholder="Escribe un mensaje...">
+                    <button id="sendButton" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div id="profileContainer">
+        <h2>Editar Perfil</h2>
+        <img id="currentProfilePhoto" src="/api/placeholder/100/100" alt="Foto de perfil">
+        <label for="profilePhotoInput" id="profilePhotoLabel">Cambiar foto de perfil</label>
+        <input type="file" id="profilePhotoInput" accept="image/*">
+        <input type="text" id="editUsername" placeholder="Nuevo nombre de usuario">
+        <input type="email" id="editEmail" placeholder="Nuevo email">
+        <button onclick="updateProfile()">Guardar Cambios</button>
+        <button onclick="hideProfileEditor()">Cancelar</button>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    
+    <!-- Tu archivo JavaScript principal -->
+    <script src="app.js"></script>
+</body>
+</html>
