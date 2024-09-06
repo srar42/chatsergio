@@ -1,0 +1,317 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f2f5;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+/* Estilos para la autenticación */
+#authContainer {
+    padding: 20px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+#authContainer h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #0084ff;
+}
+
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #0084ff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0063cc;
+}
+
+/* Estilos para el contenedor principal */
+#mainContainer {
+    display: flex;
+    height: 100%;
+}
+
+/* Estilos para la lista de chats */
+#chatListContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+#chatListHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #0084ff;
+    color: white;
+}
+
+#chatList {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.chat-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.chat-item:hover {
+    background-color: #f0f0f0;
+}
+
+.chat-item img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.chat-info {
+    flex-grow: 1;
+}
+
+.chat-name {
+    font-weight: bold;
+}
+
+.chat-last-message {
+    font-size: 0.8em;
+    color: #888;
+}
+
+/* Estilos para el chat activo */
+#activeChatContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+#chatHeader {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #0084ff;
+    color: white;
+}
+
+#chatHeader h2 {
+    margin-left: 10px;
+}
+
+#messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.message {
+    max-width: 80%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    clear: both;
+}
+
+.message.sent {
+    background-color: #0084ff;
+    color: white;
+    float: right;
+}
+
+.message.received {
+    background-color: #f0f0f0;
+    float: left;
+}
+
+.input-group {
+    display: flex;
+    padding: 10px;
+    background-color: #f0f0f0;
+}
+
+#messageInput {
+    flex-grow: 1;
+    margin-right: 10px;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 15px;
+}
+
+#sendButton {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #0084ff;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilos para botones de acción */
+#editProfileBtn, #backToChatList {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Estilos para el editor de perfil */
+#profileContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    z-index: 1001;
+    display: none;
+    width: 90%;
+    max-width: 300px;
+}
+
+#profileContainer h2 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#currentProfilePhoto {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 15px;
+}
+
+#profilePhotoLabel {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #0084ff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+#profilePhotoInput {
+    display: none;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: none;
+    z-index: 1000;
+}
+
+/* Estilos responsivos */
+@media (max-width: 767px) {
+    #mainContainer {
+        flex-direction: column;
+    }
+
+    #chatListContainer, #activeChatContainer {
+        width: 100%;
+    }
+
+    #activeChatContainer {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        width: 90%;
+        height: 90%;
+        max-width: 1200px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    #mainContainer {
+        flex-direction: row;
+    }
+
+    #chatListContainer {
+        width: 30%;
+        border-right: 1px solid #eee;
+    }
+
+    #activeChatContainer {
+        width: 70%;
+        display: flex !important;
+    }
+
+    #backToChatList {
+        display: none;
+    }
+}
+
+/* ... (estilos anteriores sin cambios) ... */
+
+.chat-status {
+    font-size: 0.8em;
+    margin-top: 2px;
+}
+
+.online-status {
+    color: #4CAF50;
+}
+
+.last-seen {
+    color: #757575;
+}
+
+#chatStatus {
+    font-size: 0.8em;
+    color: #757575;
+    margin-left: 10px;
+}
+
+/* ... (resto de los estilos sin cambios) ... */
