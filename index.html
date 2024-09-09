@@ -2,71 +2,316 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChatWave - Tu Chat Privado</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Privado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        #auth-container, #app-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        #app-container {
+            display: flex;
+        }
+        #chat-list {
+            width: 30%;
+            border-right: 1px solid #ddd;
+            padding-right: 20px;
+        }
+        #chat-window {
+            width: 70%;
+            padding-left: 20px;
+        }
+        #messages {
+            height: 400px;
+            overflow-y: scroll;
+            padding: 20px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 80%;
+        }
+        .sent {
+            background-color: #dcf8c6;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .received {
+            background-color: #e5e5ea;
+            align-self: flex-start;
+        }
+        #message-form, #auth-form, #new-chat-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        input[type="text"], input[type="email"], input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .chat-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+        .chat-item:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div id="authContainer">
-            <h1>ChatWave</h1>
-            <input type="text" id="usernameInput" placeholder="Nombre de usuario">
-            <input type="email" id="emailInput" placeholder="Email">
-            <input type="password" id="passwordInput" placeholder="Contraseña">
-            <button onclick="signIn()">Iniciar sesión</button>
-            <button onclick="signUp()">Registrarse</button>
-        </div>
-        <div id="mainContainer" style="display:none;">
-            <div id="chatListContainer">
-                <div id="chatListHeader">
-                    <h2>Chats</h2>
-                    <button id="editProfileBtn" onclick="showProfileEditor()" aria-label="Editar Perfil">
-                        <i class="fas fa-user-edit"></i>
-                    </button>
-                </div>
-                <div id="chatList">
-                    <!-- Chats se añadirán aquí dinámicamente -->
-                </div>
-            </div>
-            <div id="activeChatContainer">
-                <div id="chatHeader">
-                    <button id="backToChatList" onclick="showChatList()" aria-label="Volver a la lista de chats">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-                    <h2>Selecciona un chat</h2>
-                </div>
-                <div id="messages"></div>
-                <div class="input-group">
-                    <input type="text" id="messageInput" placeholder="Escribe un mensaje...">
-                    <button id="sendButton" onclick="sendMessage()">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
+    <div id="auth-container">
+        <h1>Iniciar Sesión / Registrarse</h1>
+        <form id="auth-form">
+            <input type="email" id="email-input" placeholder="Correo electrónico" required>
+            <input type="password" id="password-input" placeholder="Contraseña" required>
+            <button type="submit" id="login-button">Iniciar Sesión</button>
+        </form>
+        <button id="toggle-auth">Cambiar a Registro</button>
     </div>
 
-    <div class="overlay" id="overlay"></div>
-    <div id="profileContainer">
-        <h2>Editar Perfil</h2>
-        <img id="currentProfilePhoto" src="/api/placeholder/100/100" alt="Foto de perfil">
-        <label for="profilePhotoInput" id="profilePhotoLabel">Cambiar foto de perfil</label>
-        <input type="file" id="profilePhotoInput" accept="image/*">
-        <input type="text" id="editUsername" placeholder="Nuevo nombre de usuario">
-        <input type="email" id="editEmail" placeholder="Nuevo email">
-        <button onclick="updateProfile()">Guardar Cambios</button>
-        <button onclick="hideProfileEditor()">Cancelar</button>
+    <div id="app-container" style="display:none;">
+        <div id="chat-list">
+            <h2>Chats</h2>
+            <div id="user-chats"></div>
+            <form id="new-chat-form">
+                <input type="email" id="new-chat-email" placeholder="Email del usuario" required>
+                <button type="submit">Nuevo Chat</button>
+            </form>
+        </div>
+        <div id="chat-window">
+            <h2 id="chat-title">Selecciona un chat</h2>
+            <div id="messages"></div>
+            <form id="message-form" style="display:none;">
+                <input type="text" id="message-input" placeholder="Escribe un mensaje..." required>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
     </div>
-
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-    
-    <!-- Tu archivo JavaScript principal -->
-    <script src="app.js"></script>
 </body>
 </html>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+    // Configuración de Firebase (reemplaza con tus propias credenciales)
+    const firebaseConfig = {
+        apiKey: "AIzaSyDqyy36AqP4kyMYu-JnluV6xx3xmtWro34",
+        authDomain: "chatsrar.firebaseapp.com",
+        projectId: "chatsrar",
+        storageBucket: "chatsrar.appspot.com",
+        messagingSenderId: "1048850198231",
+        appId: "1:1048850198231:web:d10fb157f0a28e3efbca92",
+        measurementId: "G-0PTTCYK42W"
+      };
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Referencias a elementos del DOM
+    const authContainer = document.getElementById('auth-container');
+    const appContainer = document.getElementById('app-container');
+    const authForm = document.getElementById('auth-form');
+    const emailInput = document.getElementById('email-input');
+    const passwordInput = document.getElementById('password-input');
+    const loginButton = document.getElementById('login-button');
+    const toggleAuthButton = document.getElementById('toggle-auth');
+    const userChatsDiv = document.getElementById('user-chats');
+    const newChatForm = document.getElementById('new-chat-form');
+    const newChatEmailInput = document.getElementById('new-chat-email');
+    const chatTitle = document.getElementById('chat-title');
+    const messagesDiv = document.getElementById('messages');
+    const messageForm = document.getElementById('message-form');
+    const messageInput = document.getElementById('message-input');
+
+    let isLoginMode = true;
+    let currentUser = null;
+    let currentChatId = null;
+
+    // Cambiar entre inicio de sesión y registro
+    toggleAuthButton.addEventListener('click', () => {
+        isLoginMode = !isLoginMode;
+        loginButton.textContent = isLoginMode ? "Iniciar Sesión" : "Registrarse";
+        toggleAuthButton.textContent = isLoginMode ? "Cambiar a Registro" : "Cambiar a Inicio de Sesión";
+    });
+
+    // Manejar autenticación
+    authForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = emailInput.value;
+        const password = passwordInput.value;
+
+        if (isLoginMode) {
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .catch((error) => {
+                    console.error("Error de inicio de sesión:", error);
+                    alert("Error de inicio de sesión: " + error.message);
+                });
+        } else {
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .catch((error) => {
+                    console.error("Error de registro:", error);
+                    alert("Error de registro: " + error.message);
+                });
+        }
+    });
+
+    // Verificar el estado de autenticación
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+            currentUser = user;
+            authContainer.style.display = 'none';
+            appContainer.style.display = 'flex';
+            loadUserChats();
+        } else {
+            currentUser = null;
+            authContainer.style.display = 'block';
+            appContainer.style.display = 'none';
+        }
+    });
+
+    // Cargar chats del usuario
+    function loadUserChats() {
+        const chatsRef = firebase.database().ref('user_chats/' + currentUser.uid);
+        chatsRef.on('child_added', (snapshot) => {
+            const chatId = snapshot.key;
+            const chatData = snapshot.val();
+            addChatToList(chatId, chatData.userEmail);
+        });
+    }
+
+    // Añadir chat a la lista
+    function addChatToList(chatId, userEmail) {
+        const chatItem = document.createElement('div');
+        chatItem.classList.add('chat-item');
+        chatItem.textContent = userEmail;
+        chatItem.addEventListener('click', () => openChat(chatId, userEmail));
+        userChatsDiv.appendChild(chatItem);
+    }
+
+    // Abrir chat
+    function openChat(chatId, userEmail) {
+        currentChatId = chatId;
+        chatTitle.textContent = `Chat con ${userEmail}`;
+        messageForm.style.display = 'flex';
+        loadMessages(chatId);
+    }
+
+    // Cargar mensajes
+    function loadMessages(chatId) {
+        messagesDiv.innerHTML = '';
+        const messagesRef = firebase.database().ref('chats/' + chatId + '/messages');
+        messagesRef.on('child_added', (snapshot) => {
+            const message = snapshot.val();
+            displayMessage(message);
+        });
+    }
+
+    // Mostrar mensaje
+    function displayMessage(message) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        messageElement.classList.add(message.senderId === currentUser.uid ? 'sent' : 'received');
+        messageElement.textContent = message.text;
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Enviar mensaje
+    messageForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = messageInput.value.trim();
+        if (text && currentChatId) {
+            const message = {
+                text: text,
+                senderId: currentUser.uid,
+                timestamp: Date.now()
+            };
+            firebase.database().ref('chats/' + currentChatId + '/messages').push(message);
+            messageInput.value = '';
+        }
+    });
+
+    // Crear nuevo chat
+    newChatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = newChatEmailInput.value.trim();
+        if (email && email !== currentUser.email) {
+            createNewChat(email);
+        } else {
+            alert('Por favor, ingresa un email válido diferente al tuyo.');
+        }
+    });
+
+    // Función para crear un nuevo chat
+    function createNewChat(email) {
+        // Primero, busca si el usuario existe
+        firebase.database().ref('users').orderByChild('email').equalTo(email).once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const userData = snapshot.val();
+                const otherUserId = Object.keys(userData)[0];
+                const chatId = [currentUser.uid, otherUserId].sort().join('_');
+
+                // Crear entrada del chat para ambos usuarios
+                const updates = {};
+                updates[`user_chats/${currentUser.uid}/${chatId}`] = { userEmail: email };
+                updates[`user_chats/${otherUserId}/${chatId}`] = { userEmail: currentUser.email };
+
+                firebase.database().ref().update(updates)
+                    .then(() => {
+                        addChatToList(chatId, email);
+                        newChatEmailInput.value = '';
+                    })
+                    .catch((error) => {
+                        console.error("Error al crear el chat:", error);
+                        alert("Error al crear el chat: " + error.message);
+                    });
+            } else {
+                alert('No se encontró ningún usuario con ese email.');
+            }
+        });
+    }
+
+    // Al registrarse, crear entrada en la base de datos de usuarios
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+            firebase.database().ref('users/' + user.uid).set({
+                email: user.email
+            });
+        }
+    });
+</script>
